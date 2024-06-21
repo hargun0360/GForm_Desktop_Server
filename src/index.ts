@@ -68,11 +68,15 @@ app.post("/api/submit", (req: Request, res: Response) => {
 app.get("/api/read", (req: Request, res: Response) => {
   console.log(req.query.index);
 
-  const index = parseInt(req.query.index as string, 10);
+  let index = parseInt(req.query.index as string, 10);
 
   console.log(index);
 
   const db = JSON.parse(fs.readFileSync(DB_PATH, "utf-8"));
+
+  if (index >= db.submissions.length) {
+    index %= db.submissions.length;
+  }
 
   if (isNaN(index) || index < 0 || index >= db.submissions.length) {
     return res.status(400).json({ error: "Invalid index" });
